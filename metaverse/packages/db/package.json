@@ -2,11 +2,11 @@
   "name": "@repo/db",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "build": "tsc -b"
-  },
   "exports": {
     "./client": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
