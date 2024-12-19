@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/routes/authrouter.ts","./src/routes/elementrouter.ts","./src/routes/roomrouter.ts","./src/routes/userrouter.ts"],"errors":true,"version":"5.7.2"}
