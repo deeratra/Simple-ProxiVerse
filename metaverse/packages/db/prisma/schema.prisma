@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin", "darwin-arm64"]
 }
 
 datasource db {
@@ -13,61 +14,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id    String @id @unique @default(cuid())
-  username   String @unique
+model User {
+  id       String @id @unique @default(cuid())
+  username String @unique
   password String
-  role Role
-  rooms Room[]
+  role     Role
+  rooms    Room[]
+  maps     Map[]
 }
 
-model Room{
-  id    String @id @unique @default(cuid())
-  name  String
-  width Int
-  height Int
+model Room {
+  id        String         @id @unique @default(cuid())
+  name      String
   creatorId String
-  creator User @relation(fields: [creatorId], references: [id])
-  elements RoomElements[]
+  creator   User           @relation(fields: [creatorId], references: [id])
+  elements  RoomElements[]
+  mapId     String?
+  map       Map?           @relation(fields: [mapId], references: [id])
 }
 
-model Element{
-  id    String @id @unique @default(cuid())
-  width Int
-  height Int
-  static Boolean
-  imageUrl String
+model Element {
+  id           String         @id @unique @default(cuid())
+  width        Int
+  height       Int
+  static       Boolean
+  imageUrl     String
   roomElements RoomElements[]
-  mapElements MapElements[]
+  mapElements  MapElements[]
 }
 
-model RoomElements{
-  id   String @id @unique @default(cuid())
-  roomId String
+model RoomElements {
+  id        String  @id @unique @default(cuid())
+  roomId    String
   elementId String
-  x Int
-  y Int
-  room Room @relation(fields: [roomId], references: [id])
-  element Element @relation(fields: [elementId], references: [id])
+  x         Int
+  y         Int
+  room      Room    @relation(fields: [roomId], references: [id])
+  element   Element @relation(fields: [elementId], references: [id])
 }
 
-model Map{
-  id    String @id @unique @default(cuid())
-  name  String
-  width Int
-  height Int
+model Map {
+  id          String        @id @unique @default(cuid())
+  name        String
+  width       Int
+  height      Int
   mapElements MapElements[]
+  Room        Room[]
+  creatorId   String
+  creator     User          @relation(fields: [creatorId], references: [id])
 }
 
-model MapElements{
-  id   String @id @unique @default(cuid())
-  mapId String
+model MapElements {
+  id        String  @id @unique @default(cuid())
+  mapId     String
   elementId String
-  x Int
-  y Int
-  map Map @relation(fields: [mapId], references: [id])
-  element Element @relation(fields: [elementId], references: [id])
-
+  x         Int
+  y         Int
+  map       Map     @relation(fields: [mapId], references: [id])
+  element   Element @relation(fields: [elementId], references: [id])
 }
 
 enum Role {
