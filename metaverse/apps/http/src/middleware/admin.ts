@@ -6,7 +6,7 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined');
 }
 
-export const userMiddleware = (
+export const adminMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -27,9 +27,10 @@ export const userMiddleware = (
       role: string;
       userId: string;
     };
-    if (decoded.role !== "ADMIN") {
-        res.status(403).json({message: "Unauthorized"})
-        return
+    console.log('decoded', decoded);
+    if (decoded.role !== 'ADMIN') {
+      res.status(403).json({ message: 'Unauthorized' });
+      return;
     }
     res.locals.userId = decoded.userId;
     next();
