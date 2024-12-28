@@ -17,7 +17,7 @@ function App() {
         <Route path="/home" element={<Home />}></Route>
         <Route path="/maps" element={<MapsPage />}></Route>
         <Route path="/addElementsToMap/:mapId" element={<AddElementsToMap />} />
-        <Route path="/arena" element={<Arena />} />
+        <Route path="/arena/:roomId" element={<Arena />} />
       </Routes>
     </BrowserRouter>
   );

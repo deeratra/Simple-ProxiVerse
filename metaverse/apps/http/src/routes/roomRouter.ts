@@ -92,3 +92,41 @@ roomRouter.delete('/:id', userMiddleware, async (req, res) => {
     });
   }
 });
+
+roomRouter.get('/:id', userMiddleware, async (req, res) => {
+  try {
+    const room = await client.room.findUnique({
+      where: {
+        id: req.params.id,
+      },
+      include: {
+        elements: {
+          include: {
+            element: true, // Includes detailed information about elements specific to the room
+          },
+        },
+        map: {
+          include: {
+            mapElements: {
+              include: {
+                element: true, // Includes detailed information about elements specific to the map
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!room) {
+      res.status(400).json({
+        message: 'Room not found',
+      });
+      return;
+    }
+    res.json(room);
+  } catch (e) {
+    console.log('error', e);
+    res.status(400).json({
+      message: e,
+    });
+  }
+});

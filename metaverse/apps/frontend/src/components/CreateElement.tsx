@@ -15,7 +15,7 @@ const CreateElement: React.FC<Props> = ({ onClose }) => {
   const handleCreateElement = async () => {
     try {
       const response = await axios.post(`${BACKEND_URL}/api/v1/element`, {
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl,
         width,
         height,
       });

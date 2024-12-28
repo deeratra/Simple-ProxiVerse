@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
+import { useNavigate } from 'react-router-dom';
 
 interface Room {
   id: string;
@@ -22,6 +23,7 @@ const Home: React.FC = () => {
   const [newRoomName, setNewRoomName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   // Fetch rooms when the component mounts
   useEffect(() => {
@@ -55,6 +57,10 @@ const Home: React.FC = () => {
     } catch (err) {
       console.error('Failed to fetch maps:', err);
     }
+  };
+
+  const handleRoomClick = (roomId: string) => {
+    navigate(`/arena/${roomId}`); // Redirect to Arena page with roomId
   };
 
   // Handle creating a new room after selecting a map
@@ -98,7 +104,11 @@ const Home: React.FC = () => {
           <p>No rooms available. Create one to get started!</p>
         ) : (
           rooms.map((room) => (
-            <div key={room.id} className="room-card">
+            <div
+              key={room.id}
+              className="room-card"
+              onClick={() => handleRoomClick(room.id)}
+            >
               <img src={room.thumbnailUrl} alt={`${room.name} Thumbnail`} />
               <p>{room.name}</p>
             </div>
