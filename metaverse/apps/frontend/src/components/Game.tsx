@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 const PROXIMITY_THRESHOLD = 50;
 
@@ -146,7 +148,7 @@ const Game: React.FC<GameProps> = ({
       }
 
       case 'user-joined': {
-        setOtherUsers((prev: any) => {
+        setOtherUsers((prev) => {
           const newUsers = new Map(prev);
           newUsers.set(data.payload.id, {
             x: data.payload.x,
@@ -159,7 +161,7 @@ const Game: React.FC<GameProps> = ({
       }
 
       case 'user-left': {
-        setOtherUsers((prev: any) => {
+        setOtherUsers((prev) => {
           const newUsers = new Map(prev);
           newUsers.delete(data.payload.id);
           return newUsers;
@@ -168,7 +170,7 @@ const Game: React.FC<GameProps> = ({
       }
 
       case 'user-moved': {
-        setOtherUsers((prev: any) => {
+        setOtherUsers((prev) => {
           const newUsers = new Map(prev);
           const user = newUsers.get(data.payload.id);
           if (user) {
