@@ -15,7 +15,6 @@ export class User {
   private roomId?: string;
   private ws: WebSocket;
 
-
   constructor(ws: WebSocket) {
     this.x = 0;
     this.y = 0;
@@ -24,8 +23,11 @@ export class User {
   }
 
   initHandlers() {
-    this.ws.on('message', async(data) => {
+    this.ws.on('message', async (data) => {
       const parsedData = JSON.parse(data.toString());
+      // if(parsedData.type === 'create-offer'){
+      //   console.log('Offer recieved', parsedData.payload.sdp);
+      // }
       console.log('received: %s', parsedData);
       console.log('RoomId', this.roomId);
       switch (parsedData.type) {
@@ -34,7 +36,8 @@ export class User {
           this.roomId = roomId;
           const token = parsedData.payload.token;
           console.log('token', token);
-          const userId = (jwt.verify(token, JWT_SECRET || '') as JwtPayload).userId;
+          const userId = (jwt.verify(token, JWT_SECRET || '') as JwtPayload)
+            .userId;
           if (!userId) {
             this.ws.close();
             return;
@@ -63,10 +66,10 @@ export class User {
             },
           });
           if (!room) {
-            this.ws.close()
+            this.ws.close();
             return;
-        }
-            
+          }
+
           RoomManager.getInstance().addUserToRoom(roomId, this);
           this.x = Math.floor(Math.random() * (room.map?.width || 1000));
           this.y = Math.floor(Math.random() * (room.map?.height || 1000));
@@ -81,21 +84,25 @@ export class User {
                 RoomManager.getInstance()
                   .rooms.get(roomId)
                   ?.filter((user) => user.id !== this.id)
-                  ?.map((user) => ({ id: user.id, x: user.x, y: user.y })) ?? [],
+                  ?.map((user) => ({ id: user.id, x: user.x, y: user.y })) ??
+                [],
             },
           });
 
-          RoomManager.getInstance().broadcast({
-            type: 'user-joined',
-            payload: {
-              id: this.id,
-              x: this.x,
-              y: this.y,
+          RoomManager.getInstance().broadcast(
+            {
+              type: 'user-joined',
+              payload: {
+                id: this.id,
+                x: this.x,
+                y: this.y,
+              },
             },
-          }, this, roomId);
+            this,
+            roomId,
+          );
           break;
         }
-        
 
         case 'move': {
           console.log('User Moving');
@@ -105,17 +112,24 @@ export class User {
           const yDisplacement = Math.abs(moveY - this.y);
           console.log('xDisplacement', xDisplacement);
           console.log('yDisplacement', yDisplacement);
-          if((xDisplacement === 10 && yDisplacement===0)  || (xDisplacement===0 && yDisplacement===10)){
+          if (
+            (xDisplacement === 10 && yDisplacement === 0) ||
+            (xDisplacement === 0 && yDisplacement === 10)
+          ) {
             this.x = moveX;
             this.y = moveY;
-            RoomManager.getInstance().broadcast({
-              type: 'user-moved',
-              payload: {
-                x: this.x,
-                y: this.y,
-                id: this.id,
+            RoomManager.getInstance().broadcast(
+              {
+                type: 'user-moved',
+                payload: {
+                  x: this.x,
+                  y: this.y,
+                  id: this.id,
+                },
               },
-            }, this, this.roomId || '');
+              this,
+              this.roomId || '',
+            );
             return;
           }
           this.send({
@@ -125,19 +139,88 @@ export class User {
               y: this.y,
             },
           });
-            
+        }
+
+        case 'ice-candidate': {
+          const targetId = parsedData.payload.target;
+          const candidate = parsedData.payload.candidate;
+          const type = parsedData.payload.type;
+
+          const roomUsers = RoomManager.getInstance().rooms.get(this.roomId!);
+          const targetUser = roomUsers?.find((user) => user.id === targetId);
+          if (!targetUser) {
+            return;
+          }
+          targetUser.send({
+            type: 'ice-candidate',
+            payload: {
+              candidate,
+              from: this.id,
+              type
+            },
+          });
+          break;
+        }
+
+        case 'create-offer': {
+          console.log('Offer recieved');
+          const targetId = parsedData.payload.target;
+          const offer = parsedData.payload.sdp;
+          const type = parsedData.payload.type;
+
+          const roomUsers = RoomManager.getInstance().rooms.get(this.roomId!);
+          const targetUser = roomUsers?.find((user) => user.id === targetId);
+          if (!targetUser) {
+            return;
+          }
+          targetUser.send({
+            type: 'create-offer',
+            payload: {
+              offer,
+              type,
+              from: this.id,
+            },
+          });
+          console.log('Offer sent');
+          break;
+        }
+
+        case 'create-answer': {
+          console.log('Answer recieved');
+          const targetId = parsedData.payload.target;
+          console.log('TargetId', targetId);
+          const answer = parsedData.payload.sdp;
+
+          const roomUsers = RoomManager.getInstance().rooms.get(this.roomId!);
+          const targetUser = roomUsers?.find((user) => user.id === targetId);
+          if (!targetUser) {
+            return;
+          }
+          targetUser.send({
+            type: 'create-answer',
+            payload: {
+              answer,
+              from: this.id,
+            },
+          });
+          console.log('Answer sent');
+          break;
         }
       }
     });
   }
 
   remove() {
-    RoomManager.getInstance().broadcast({
-      type: 'user-left',
-      payload: {
-        userId: this.id,
+    RoomManager.getInstance().broadcast(
+      {
+        type: 'user-left',
+        payload: {
+          userId: this.id,
+        },
       },
-    }, this, this.roomId || '');
+      this,
+      this.roomId || '',
+    );
     RoomManager.getInstance().removeUserFromRoom(this.roomId!, this);
   }
 

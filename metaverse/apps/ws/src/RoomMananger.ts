@@ -20,7 +20,7 @@ export class RoomManager {
     }
     this.rooms.set(
       roomId,
-      this.rooms.get(roomId)?.filter((u) => u.id !== user.id) ?? []
+      this.rooms.get(roomId)?.filter((u) => u.id !== user.id) ?? [],
     );
     console.log(`User removed from room ${roomId}`);
   }
@@ -31,7 +31,7 @@ export class RoomManager {
       this.rooms?.set(roomId, [user]);
       console.log(`User added to room ${roomId}`);
     }
-    this.rooms.set(roomId, [...this.rooms.get(roomId) ?? [], user]);
+    this.rooms.set(roomId, [...(this.rooms.get(roomId) ?? []), user]);
   }
 
   public broadcast(message: any, user: User, roomId: string) {
@@ -43,4 +43,14 @@ export class RoomManager {
       }
     });
   }
+
+  // public sendToUser(message: any, userId: string) {
+  //   this.rooms.forEach((users) => {
+  //     users.forEach((user) => {
+  //       if (user.id === userId) {
+  //         user.send(message);
+  //       }
+  //     });
+  //   });
+  // }
 }
