@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={isLoggedIn ? <Posts /> : <Signin setIsLoggedIn={setIsLoggedIn} />} /> */}
+        <Route path="/" element={<Register />} />
         <Route path="/signup" element={<Register />}></Route>
         <Route path="/signin" element={<Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
