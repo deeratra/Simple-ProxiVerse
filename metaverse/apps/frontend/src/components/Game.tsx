@@ -372,7 +372,7 @@ const Game: React.FC<GameProps> = ({
 
   // Websocket Initialization
   useEffect(() => {
-    wsRef.current = new WebSocket('ws://192.168.2.202:3001');
+    wsRef.current = new WebSocket('ws://localhost:3001');
     wsRef.current.onopen = () => {
       wsRef.current?.send(
         JSON.stringify({
