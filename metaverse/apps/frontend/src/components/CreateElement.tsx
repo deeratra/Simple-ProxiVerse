@@ -35,6 +35,7 @@ const CreateElement: React.FC<Props> = ({ onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded shadow-lg w-96">
         <h2 className="text-lg font-bold mb-4">Create Element</h2>
+        <h2>{success}</h2>
         <form>
           <label className="block mb-2">
             Image URL:

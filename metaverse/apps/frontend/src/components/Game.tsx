@@ -106,7 +106,7 @@ const Game: React.FC<GameProps> = ({
     wsRef.current?.send(
       JSON.stringify({ type: 'move', payload: { x: dx, y: dy } }),
     );
-    setUserPosition((prev) => ({
+    setUserPosition(() => ({
       x: Math.max(0, dx),
       y: Math.max(0, dy),
     }));

@@ -11,7 +11,7 @@ const CreateMap: React.FC<Props> = ({ onClose }) => {
   const [name, setName] = useState('');
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const [error, setError] = useState('');
+  // const [setError] = useState('');
 
   const handleCreateMap = async () => {
     try {
@@ -31,7 +31,7 @@ const CreateMap: React.FC<Props> = ({ onClose }) => {
       onClose();
     } catch (err) {
       console.error('Error creating map:', err);
-      setError('Failed to create map.');
+      // setError('Failed to create map.');
     }
   };
 

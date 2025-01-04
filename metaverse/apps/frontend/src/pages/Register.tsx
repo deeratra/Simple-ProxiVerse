@@ -6,7 +6,7 @@ import { BACKEND_URL } from '../config';
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('admin');
+  const [role] = useState('admin');
   const [error, setError] = useState('');
 
   const handleRegistration = async (e: React.FormEvent) => {
